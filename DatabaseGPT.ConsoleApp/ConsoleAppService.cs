@@ -1,25 +1,28 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace DatabaseGPT.ConsoleApp;
 
 internal class ConsoleAppService
 {
     // REF: https://www.patterns.app/blog/2023/01/18/crunchbot-sql-analyst-gpt/
-    private const string ConnectionStringName = "OurBudget"; // "AdventureWorks2016"; // "WorldWideImporters";
+
     private const int MaxRetries = 3;
 
     private readonly QueryService queryService;
     private readonly IConfiguration configuration;
+    private readonly string connectionStringName;
 
-    public ConsoleAppService(QueryService queryService, IConfiguration configuration)
+    public ConsoleAppService(QueryService queryService, IConfiguration configuration, IOptionsSnapshot<AppSettings> appSettings)
     {
         this.queryService = queryService;
         this.configuration = configuration;
+        this.connectionStringName = appSettings.Value.ConnectionStringName; // "OurBudget" | "AdventureWorks2016" | "WorldWideImporters"
     }
 
     public async Task TestAsync(string[] args, CancellationToken cancellationToken)
     {
-        var schemaPrompt = await queryService.GetSchemaPromptAsync(ConnectionStringName);
+        var schemaPrompt = await queryService.GetSchemaPromptAsync(connectionStringName);
 
         while (true)
         {
@@ -53,7 +56,7 @@ internal class ConsoleAppService
                         break;
                     }
 
-                    var connectionString = configuration.GetConnectionString(ConnectionStringName);
+                    var connectionString = configuration.GetConnectionString(connectionStringName);
                     var data = await queryService.ExecuteQueryAndDisplayDataAsync(connectionString, queryText);
 
                     Console.WriteLine(data);
