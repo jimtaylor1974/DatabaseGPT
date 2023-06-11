@@ -15,3 +15,18 @@ To use this application you will need to set the OpenAiApiKey in the User Secret
 ```
 
 Please keep in mind that this application is a proof of concept and does not have safeguards against prompt injection, malicious prompt engineering, user access control, or data mutation protection.
+
+You can set the database connection in appsettings.json, the app will read the schema and use it to create the query prompt.
+
+```json
+{
+  "AppSettings": {
+    "ConnectionStringName": "OurBudget"
+  },
+  "ConnectionStrings": {
+    "WorldWideImporters": "Data Source=.;Initial Catalog=WorldWideImporters;Integrated Security=True;TrustServerCertificate=True",
+    "AdventureWorks2016": "Data Source=.;Initial Catalog=AdventureWorks2016;Integrated Security=True;TrustServerCertificate=True",
+    "OurBudget": "Data Source=.;Initial Catalog=OurBudget;Integrated Security=True;TrustServerCertificate=True"
+  }
+}
+```
